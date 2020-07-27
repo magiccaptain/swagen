@@ -1,0 +1,44 @@
+{
+  "name": "@magicjs/swagen",
+  "version": "0.1.0",
+  "description": "Swagen koa api & web sdk & postman json for openapi",
+  "repository": {
+    "url": "36node/sketch",
+    "type": "git"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "template": "cli",
+  "main": "dist/index.js",
+  "module": "dist/index.m.js",
+  "files": [
+    "bin",
+    "dist",
+    "templates"
+  ],
+  "bin": {
+    "swagen": "bin/swagen.js"
+  },
+  "config-overrides-path": "../cli/config-overrides",
+  "scripts": {
+    "build": "NODE_ENV=production sketch build",
+    "test": "NODE_ENV=test sketch test --env=node"
+  },
+  "dependencies": {
+    "@36node/sketch": "^0.15.2",
+    "handlebars": "^4.0.12",
+    "handlebars-helpers": "^0.10.0",
+    "js-yaml": "^3.12.0",
+    "json-schema-to-typescript": "^9.1.0",
+    "jsonfile": "^5.0.0",
+    "lodash": "^4.17.11",
+    "postman-collection": "^3.3.0",
+    "prettier": "^1.18.2",
+    "request": "^2.88.0",
+    "require-directory": "^2.1.1",
+    "swagger-parser": "^6.0.1",
+    "uuid": "^3.3.2"
+  }
+}

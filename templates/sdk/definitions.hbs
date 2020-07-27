@@ -1,0 +1,44 @@
+
+declare class SDK {
+  constructor(opts?: Options);
+
+  base: string;
+  token: string | (() => string);
+  auth: string;
+
+  {{#each api}}
+  {{@key}}: {{capitalize @key}}API;
+  {{/each}}
+}
+
+declare global {
+
+  export interface Options {
+    base?: string;
+    token?: string | (() => string);
+  }
+
+  {{#each api}}
+  export interface {{capitalize @key}}API {
+    {{#each operations}}
+    /**
+     * {{summary}}
+     */
+    {{name}}(req: {{capitalize name}}Request): Promise<{{capitalize name}}Response>;
+    {{/each}}
+  }
+  {{/each}}
+
+  {{#each api}}
+  {{#each operations}}
+  {{#if requestDef}}
+  {{{requestDef}}};
+  {{/if}}
+  {{#if responseDef}}
+  {{{responseDef}}};
+  {{/if}}
+  {{/each}}
+  {{/each}}
+}
+
+export = SDK;

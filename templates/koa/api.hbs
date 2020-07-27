@@ -1,0 +1,105 @@
+/// <reference path="{{name}}.d.ts" />
+//@ts-check
+
+/**
+ * @typedef {Object} State
+ */
+
+export default class {
+  /**
+   * Bind service to router
+   *
+   * @param {import("koa-tree-router")} router the koa compatible router
+   * @returns {this}
+   */
+  bind(router) {
+  {{#each operations}}
+    const {{decapitalize name}} = async ctx => {
+      {{#or parameters requestBody}}
+      const req = {
+        {{#each parameters}}
+        {{#is in "path"}}
+        {{name}}: ctx.params.{{name}},
+        {{/is}}
+        {{/each}}
+        {{#withParamQuery parameters}}
+        query: ctx.query,
+        {{/withParamQuery}}
+        {{#withParamHeader parameters}}
+        headers: {
+          {{#each parameters}}
+          {{#is in "header"}}
+          {{name}}: ctx.headers["{{name}}"],
+          {{/is}}
+          {{/each}}
+        },
+        {{/withParamHeader}}
+        {{#withParamCookie parameters}}
+        cookies: {
+          {{#each parameters}}
+          {{#is in "cookie"}}
+          {{name}}: ctx.cookies.get({{name}},
+          {{/is}}
+          {{/each}}
+        },
+        {{/withParamCookie}}
+        {{#with requestBody}}
+        body: ctx.request.body,
+        {{/with}} 
+      };
+      {{/or}}
+      {{#or response.content response.headers}}const res = {{/or}}await this.{{decapitalize name}}({{#or parameters requestBody}}req,{{/or}}ctx);
+      {{#if response.content}}
+      ctx.body = res.content;
+      {{/if}}
+      {{#each response.headers}}
+      ctx.set("{{@key}}", res.headers["{{@key}}"]);
+      {{/each}}
+      ctx.status = {{response.status}};
+    };
+
+  {{/each}}
+  {{#each operations}}
+    router.{{method}}(
+      "{{toRoute path}}",
+      ...this.middlewares("{{name}}"),
+      {{name}}
+    );
+  {{/each}}
+
+    return this;
+  }
+
+  /**
+   * implement following abstract methods in the inherited class
+   */
+
+  /**
+   * Ability to inject some middlewares
+   *
+   * @abstract
+   * @param {string} operation name of operation
+   * @returns {Array<import("koa").Middleware<State>>} middlewares
+   */
+  middlewares(operation) {
+    return [];
+  }
+{{#each operations}}
+
+  /**
+   * {{summary}}
+   *
+   * @abstract
+   {{#or parameters requestBody}}
+   * @param { {{~capitalize name}}Request} req {{name}} request
+   {{/or}}
+   * @param {import("koa").Context<State>} [ctx] koa context
+   {{#or response.content response.headers}}
+   * @returns {Promise<{{~capitalize name}}Response>} {{response.description}}
+   {{/or}}
+   */
+  {{decapitalize name}}({{#or parameters requestBody}}req,{{/or}}ctx) {
+    throw new Error("not implemented");
+  }
+{{/each}}
+}

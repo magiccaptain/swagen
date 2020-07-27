@@ -1,0 +1,19 @@
+var Ajv = require('ajv');
+var ajv = new Ajv({ logger: console, coerceTypes: true, unknownFormats: ["int32"] });
+
+{{#withResponseStatus this}}
+pm.test("Status code is {{response.status}}", function () {
+  pm.response.to.have.status({{response.status}});
+});
+{{/withResponseStatus}}
+
+{{#if responseSchema}}
+const schema = {{{postmanAjvSchema responseSchema}}};
+const res = {
+  content: pm.response.json(),
+  headers: pm.response.headers.reduce((c, k) => ({...c, [k.key]: k.value }), {})
+}
+pm.test("Json body schema test", function(){
+  pm.expect(ajv.validate(schema, res)).to.be.true;
+})
+{{/if}}

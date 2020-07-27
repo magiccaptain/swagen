@@ -1,0 +1,107 @@
+//@ts-check
+import fetch from "@36node/fetch";
+
+export default class SDK {
+  /**@type {string} **/
+  base;
+  /**@type {string} **/
+  token;
+
+  {{#if components.securitySchemes }}
+  /**
+   * Sdk auth
+   *
+   * @returns {string} auth header
+   * */
+  get auth() {
+    {{#if components.securitySchemes.bearerAuth }}
+    let token = this.token;
+    // @ts-ignore
+    if (typeof token === "function") token = token();
+    if (token) return `Bearer ${token}`;
+    {{/if}}
+
+    return "";
+  }
+  {{/if}}
+
+  /**
+   * Init store sdk
+   *
+   * @param {Object} opt
+   * @param {string} opt.base  base url
+   * @param {string} opt.token token for authorization
+   */
+  constructor(opt = { base: "", token: "" }) {
+    this.base = opt.base;
+    this.token = opt.token;
+  }
+
+  {{#each api}}
+  /**
+   * {{@key}}'s methods
+   */
+  {{@key}} = {
+    {{#each operations}}
+    /**
+     * {{summary}}
+     *
+     * @param { {{~capitalize name}}Request} req {{name}} request
+     {{#if responseDef}}
+     * @returns {Promise< {{~capitalize name}}Response>} {{response.description}}
+     {{/if}}
+     */
+    {{name}}: (req) => {
+      const {
+        {{#each parameters}}
+        {{#is in "path"}}
+        {{name}},
+        {{/is}}
+        {{/each}}
+        {{#withParamQuery parameters}}
+        query,
+        {{/withParamQuery}}
+        {{#withParamHeader parameters}}
+        headers,
+        {{/withParamHeader}}
+        {{#with requestBody}}
+        body,
+        {{/with}}
+      } = req || {};
+
+      {{#each parameters}}
+      {{#is in "path"}}
+      {{#is required true}}
+      if (!{{name}}) throw new Error("{{name}} is required for {{../name}}");
+      {{/is}}
+      {{/is}}
+      {{/each}}
+      {{#requireParamQuery parameters}}
+      if (!query) throw new Error("query is required for {{../name}}");
+      {{/requireParamQuery}}
+      {{#requireParamHeader parameters}}
+      if (!headers) throw new Error("headers is required for {{../name}}");
+      {{/requireParamHeader}}
+      {{#with requestBody}}
+      if (!body) throw new Error("requetBody is required for {{../name}}");
+      {{/with}}
+
+      return fetch(`${this.base}{{toDollar path}}`, {
+        method: "{{toUpperCase method}}",
+        {{#withParamQuery parameters}}
+        query,
+        {{/withParamQuery}}
+        {{#with requestBody}}
+        body,
+        {{/with}}
+        headers: { Authorization: this.auth, 
+        {{#withParamHeader parameters}}
+        ...headers,
+        {{/withParamHeader}}
+        },
+      });
+    },
+    {{/each}}
+  };
+  {{/each}}
+}
