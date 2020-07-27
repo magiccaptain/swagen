@@ -1,29 +1,11 @@
-//@ts-check
+/// <reference path="index.d.ts" />
 import fetch from "@36node/fetch";
 
 export default class SDK {
   /**@type {string} **/
   base;
-  /**@type {string} **/
-  token;
-
-  {{#if components.securitySchemes }}
-  /**
-   * Sdk auth
-   *
-   * @returns {string} auth header
-   * */
-  get auth() {
-    {{#if components.securitySchemes.bearerAuth }}
-    let token = this.token;
-    // @ts-ignore
-    if (typeof token === "function") token = token();
-    if (token) return `Bearer ${token}`;
-    {{/if}}
-
-    return "";
-  }
-  {{/if}}
+  /**@type {object} **/
+  defaultHeader;
 
   /**
    * Init store sdk
@@ -32,9 +14,9 @@ export default class SDK {
    * @param {string} opt.base  base url
    * @param {string} opt.token token for authorization
    */
-  constructor(opt = { base: "", token: "" }) {
+  constructor(opt = { base: "", defaultHeader: {} }) {
     this.base = opt.base;
-    this.token = opt.token;
+    this.defaultHeader = opt.defaultHeader;
   }
 
   {{#each api}}
@@ -94,7 +76,7 @@ export default class SDK {
         {{#with requestBody}}
         body,
         {{/with}}
-        headers: { Authorization: this.auth, 
+        headers: { ...this.defaultHeader, 
         {{#withParamHeader parameters}}
         ...headers,
         {{/withParamHeader}}

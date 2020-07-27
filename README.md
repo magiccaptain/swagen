@@ -94,16 +94,3 @@ swagen sdk https://api.36node.com/petstore/v0/openapi.yaml . petstore
 
 1. Add new generator js file in src/generators, filename is the template name.
 2. In new generator js file， export default function which generate template.
-
-## Author
-
-**template-cli** © [36node](https://github.com/36node), Released under the [MIT](./LICENSE) License.
-
-Authored and maintained by 36node with help from contributors ([list](https://github.com/36node/template-cli/contributors)).
-
-> [github.com/zzswang](https://github.com/zzswang) · GitHub [@36node](https://github.com/36node) · Twitter [@y](https://twitter.com/y)
-
-[0]: https://img.shields.io/npm/v/@36node/swagen.svg?style=flat
-[1]: https://npmjs.com/package/@36node/swagen
-[2]: https://img.shields.io/npm/dm/@36node/swagen.svg?style=flat
-[3]: https://npmjs.com/package/@36node/swagen

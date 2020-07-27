@@ -3,8 +3,7 @@ declare class SDK {
   constructor(opts?: Options);
 
   base: string;
-  token: string | (() => string);
-  auth: string;
+  defaultHeader: object;
 
   {{#each api}}
   {{@key}}: {{capitalize @key}}API;
@@ -15,7 +14,7 @@ declare global {
 
   export interface Options {
     base?: string;
-    token?: string | (() => string);
+    defaultHeader?: object;
   }
 
   {{#each api}}

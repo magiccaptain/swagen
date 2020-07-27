@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "description": "Swagen koa api & web sdk & postman json for openapi",
   "repository": {
-    "url": "36node/sketch",
+    "url": "https://github.com/magiccaptain/swagen.git",
     "type": "git"
   },
   "license": "MIT",
