@@ -1,6 +1,6 @@
 {
   "name": "@magicjs/swagen",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Swagen koa api & web sdk & postman json for openapi",
   "repository": {
     "url": "https://github.com/magiccaptain/swagen.git",
